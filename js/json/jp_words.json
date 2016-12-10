@@ -1,0 +1,18 @@
+{
+	"structure": {
+		 "i": "index",
+		"kj": "kanji",
+		"fg": "furigana (reading)",
+		 "t": "type",
+		 "d": "definition",
+		"cj": "conjugation",
+		 "g": "gender",
+		 "h": "honorifics",
+		 "l": "level"
+	},
+	"index": 1,
+	"jpWords": [
+		{ "i":0, "kj":"w,o,r,d,1", "fg":"a,s,d,f,1", "t":"n", "d":"a definition", "cj":"", "g":"", "h":"", "l":0 },
+		{ "i":1, "kj":"w,o,r,d,2", "fg":"a,s,d,f,2", "t":"n", "d":"another definition", "cj":"", "g":"", "h":"", "l":0 }
+	]
+}

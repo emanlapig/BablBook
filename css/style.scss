@@ -1,0 +1,111 @@
+// global css
+@import 'mixins';
+
+body {
+	padding: 0px;
+	margin: 0px;
+}
+
+.page {
+	position: absolute;
+	display: block;
+	width: 100%;
+	height: 100%;
+	left: 0px;
+	top: 0px;
+	background-color: #fff;
+	font-size: 16px;
+	@include transition( opacity, .2s, ease-out, 0s );
+	&.jp {
+		&.vocab {
+			.vocab-list {
+				@include transition( opacity, .2s, ease-out, 0s );
+			}
+		}
+		&.word-edit {
+			.word-input {
+				margin-top: 18px;
+				font-size: 2em;
+				position: relative;
+				padding: 6px 0px!important;
+				border: none!important;
+				overflow: visible!important;
+			}
+			.top, .bottom {
+				display: block;
+				width: 100%;
+				height: 50%;
+			}
+			.fg-inputs {
+				display: block;
+				font-size: 2em;
+				top: 0px;
+				margin: 0px;
+				.fg-group {
+					display: inline-block;
+					text-align: center;
+					margin: 4px 0px;
+					@include transition( all, .5s, ease-out, 0s );
+					&.expanded {
+						margin: 4px;
+					}
+					.fg-input {
+						font-size: 14px;
+						height: 14px;
+						width: 0;
+						border: none;
+						padding: 0px;
+						opacity: 0;
+						background-color: #e8e8e8;
+						@include transition( all, .5s, ease-out, 0s );
+						&.expanded {
+							width: 60px;
+							opacity: 1;
+						}
+					}
+				}
+			}
+		} // .word-edit
+	}
+}
+
+// GLOBAL CSS
+a {
+	display: block;
+}
+
+select { 
+	option[disabled] { 
+		display: none; 
+	}
+}
+
+.hidden {
+	z-index: 0;
+	opacity: 0;
+}
+
+.show {
+	z-index: 1;
+	opacity: 1;
+}
+
+.display-none {
+	display: none!important;
+}
+
+.loading:after {
+	display: block;
+	position: absolute;
+	width: 100px;
+	height: 50px;
+	line-height: 50px;
+	text-align: center;
+	background-color: #000;
+	color: #fff;
+	left: 50%;
+	top: 50%;
+	margin-left: -50px;
+	margin-top: -25px;
+	content: "loading...";
+}

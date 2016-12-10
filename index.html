@@ -1,0 +1,71 @@
+<html>
+<head>
+	<title>BablBook</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=320, initial-scale=1, maximum-scale=1, user-scalable=0" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+	<script type="text/javascript" src="lib/jquery-3.1.1.min.js"></script>
+	<script type="text/javascript" src="js/min/View.min.js"></script>
+	<script type="text/javascript" src="js/min/Controller.min.js"></script>
+	<link rel="stylesheet" href="css/style.min.css">
+</head>
+<body>
+	<!-- Home Page -->
+	<div class="page homepage show">
+		<h1>BablBook</h1>
+		<a href="javascript:;" class="btn" id="jp-main">日本語</a>
+		<a href="javascript:;" class="btn" id="ar-main">العَرَبِيَّة</a>
+		<a href="javascript:;" class="btn" id="hb-main">עברית</a>
+	</div>
+
+	<!-- Japanese - Main -->
+	<div class="page jp main hidden">
+		<h1>日本語</h1>
+		<a href="javascript:;" class="btn" id="jp-vocab">Vocab</a>
+		<a href="javascript:;" class="btn" id="jp-sentences">Sentences</a>
+	</div>
+
+	<!-- Japanese - Vocab List -->
+	<div class="page jp vocab hidden loading">
+		<a href="javascript:;" class="btn" id="jp-new-word">+New Word</a>
+		<span class="vocab-list hidden">
+		</span>
+	</div>
+
+	<!-- Japanese - Edit Word Form -->
+	<div class="page jp word-edit hidden">
+		<span class="top">
+			<input type="text" class="word-input" placeholder="Enter a Word"></input>
+			<span class="fg-inputs display-none"></span><br><br>
+			<a href="javascript:;" class="btn step1" id="jp-reading">Reading</a>
+			<a href="javascript:;" class="btn step2 display-none" id="jp-back-word">Back to Word</a>
+			<a href="javascript:;" class="btn step2 display-none" id="jp-special-rdg">Special Reading</a>
+			<a href="javascript:;" class="btn display-none" id="jp-normal-rdg">Normal Reading</a>
+		</span>
+		<span class="bottom">
+			<select class="word-type" name="type">
+				<!--<option value="" disabled selected>type</option>-->
+				<option value="n.">noun</option>
+				<option value="v.">verb</option>
+				<option value="adj.">adjective</option>
+				<option value="adv.">adverb</option>
+				<option value="part.">particle</option>
+				<option value="suff.">suffix</option>
+				<option value="cntr.">counter</option>
+			</select><br>
+			<textarea rows="3" class="word-def" name="def" placeholder="Enter a definition"></textarea><br>
+			<a href="javascript:;" class="btn" id="jp-submit">Done</a>
+		</span>
+	</div>
+
+	<div class="overlay">
+	</div>
+
+	<script type="text/javascript">
+		if ( typeof Controller.init === "function" ) {
+			Controller.init();
+		}
+	</script>
+</body>
+</html>
