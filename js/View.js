@@ -1,59 +1,63 @@
 // Model/View JS
 
 var Model = {
+	// ---------- JAPANESE ----------
 	jp: {
 		vocab: {
 			index: 1,
-			ls: [],
-			words: []
+			ls: [], // localStorage cache
+			words: [] // collated word list
 		}
 	}
 };
 
 var View = {
+	// ---------- JAPANESE ----------
 	jp: {
+		// Vocab List
 		vocab: {
 			render_list: function() {
-				$( ".jp.vocab .vocab-list" ).html( "" );
-				$( ".jp.vocab" ).removeClass( "loading" );
+				$( ".jp.vocab .vocab-list" ).html( "" ); // clear the vocab list
+				$( ".jp.vocab" ).removeClass( "loading" ); // remove loader
 				var words = M.jp.vocab.words;
 				for ( var i=0; i<words.length; i++ ) {
-					var el = document.createElement( "div" )
+					var el = document.createElement( "div" ) // build word container
 						, word = words[i].kj.split( "," ).join( "" )
 						, reading = words[i].fg.split( "," ).join( "" )
 						, type = words[i].t
 						, def = words[i].d
 						, html = word + " " + reading + " " +  "(" + type + ") " + def;
-					html += " <a href='javascript:;' class='edit-btn'>edit</a>";
-					html += " <a href='javascript:;' class='del-btn'>delete</a>";
+					html += " <a href='javascript:;' class='edit-btn'>edit</a>"; // edit word button
+					html += " <a href='javascript:;' class='del-btn'>delete</a>"; // delete word button
 					html += "<br>";
 					el.innerHTML = html;
 					el.setAttribute( "class", "word" );
 					el.setAttribute( "data-index", words[i].i );
 					if ( words[i].f !== undefined ) {
-						el.setAttribute( "data-src", "local" );
+						el.setAttribute( "data-src", "local" ); // flag as change from localStorage
 					}
-					$( ".jp.vocab .vocab-list" ).append( el );
+					$( ".jp.vocab .vocab-list" ).append( el ); // append word container
 					if ( i===words.length-1 ) {
-						$( ".jp.vocab .vocab-list" ).removeClass( "hidden" );
+						$( ".jp.vocab .vocab-list" ).removeClass( "hidden" ); // reveal vocab list
 					}
 				}
 			},
+			// Word Edit Form
 			edit: {
-				update_fgInputs: function() {
+				update_fgInputs: function() { // explode the contents of word-input and call render_fgInputs
 					var val = $( ".jp .word-input" ).val().split( "" );
 					V.jp.vocab.edit.render_fgInputs( val );
 				},
-				render_fgInputs: function( val ) {
+				render_fgInputs: function( val ) { // create reading inputs for exploded word-input
 					var frag = document.createDocumentFragment();
-					if ( val.constructor === Array ) {
+					if ( val.constructor === Array ) { // normal reading
 						for ( var i=0; i<val.length; i++ ) {
 							var el = document.createElement( "span" );
 							el.setAttribute( "class", "fg-group" );
 							el.innerHTML = "<input type='text' class='fg-input' id='fg-input" + i + "'></input><br>" + val[i];
 							frag.appendChild( el );
 						}
-					} else {
+					} else { // special reading
 						var el = document.createElement( "span" );
 						el.setAttribute( "class", "fg-group" );
 						el.innerHTML = "<input type='text' class='fg-input' id='fg-input0'></input><br>" + val;
@@ -61,49 +65,50 @@ var View = {
 					}
 					$( ".jp .fg-inputs" ).html( frag );
 				},
-				reading: function() {
-					V.display_none([ ".jp .word-input", ".jp .fg-inputs" ]); 
+				reading: function() { // go to default reading input view
+					V.display_none([ ".jp .word-input", ".jp .fg-inputs" ]);  // hide word-input, reveal fg-inputs
 					V.jp.vocab.edit.expand_fgInputs();
 				},
-				expand_fgInputs: function() {
+				expand_fgInputs: function() { // reveal and expand reading inputs
 					V.jp.vocab.edit.update_fgInputs();
-					setTimeout( function() {
+					setTimeout( function() { // slight delay for transition
 						$( ".jp .fg-input, .jp .fg-group" ).addClass( "expanded" );
-						V.display_none([ ".jp .btn.step2", ".jp .btn.step1" ])
+						V.display_none([ ".jp .btn.step2", ".jp .btn.step1" ]); // hide step 1 btns, reveal step 2 btns
 					}, 10 );
 				},
-				special_reading: function() {
+				special_reading: function() { // render special reading view (single reading input for whole word)
 					var val = $( ".jp .word-input" ).val();
-					V.display_none([ "#jp-normal-rdg", "#jp-special-rdg" ]);
+					V.display_none([ "#jp-normal-rdg", "#jp-special-rdg" ]); // toggle normal/special rdg btns
 					V.jp.vocab.edit.render_fgInputs( val );
 					$( ".jp .fg-input, .jp .fg-group" ).addClass( "expanded" );
 				},
-				normal_reading: function() {
+				normal_reading: function() { // return to normal reading view (individual reading inputs)
 					var val = $( ".jp .word-input" ).val().split( "" );
-					V.display_none([ "#jp-normal-rdg", "#jp-special-rdg" ]);
+					V.display_none([ "#jp-normal-rdg", "#jp-special-rdg" ]); // toggle normal/special rdg btns
 					V.jp.vocab.edit.render_fgInputs( val );
 					$( ".jp .fg-input, .jp .fg-group" ).addClass( "expanded" );
 				},
-				back_to_word: function() {
+				back_to_word: function() { // collapse reading inputs and return to word-input
 					$( ".jp .fg-input, .jp .fg-group" ).removeClass( "expanded" );
-					setTimeout( function() {
-						V.display_none([ ".jp .btn.step1", ".jp .fg-inputs", ".jp .word-input" ]);
-						$( ".jp .btn.step2, #jp-normal-rdg" ).addClass( "display-none" );
+					setTimeout( function() { // wait until inputs have expanded
+						V.display_none([ ".jp .btn.step1", ".jp .fg-inputs", ".jp .word-input" ]); // reveal step 1 btns, hide fg-inputs
+						$( ".jp .btn.step2, #jp-normal-rdg" ).addClass( "display-none" ); // hide step 2 btns (override)
 						$( ".jp .word-input" ).focus();
 						var val = $( ".jp .word-input" ).val().split( "" );
-						V.jp.vocab.edit.render_fgInputs( val );
+						V.jp.vocab.edit.update_fgInputs(); // update fg-inputs behind the scenes
 					}, 500 );
 				},
-				reset_form: function() {
+				reset_form: function() { // clear all form input values and reset view
 					$( ".jp .word-input" ).val( "" );
-					V.jp.vocab.edit.back_to_word();
+					V.jp.vocab.edit.back_to_word(); // return to step 1
 					$( ".jp .word-type option:first-child" ).attr( "selected", "selected" );
 					$( ".jp .word-def" ).val( "" );
-					V.display_none( "#jp-normal-rdg" );
+					V.display_none( "#jp-normal-rdg" ); // hide normal reading btn
 				}
 			}
 		}
 	},
+	// Global Utils
 	goto_page: function( to ) {
 		var from = $( ".page" );
 		for ( var i=0; i<from.length; i++ ) {
@@ -140,7 +145,7 @@ var View = {
 	hide_overlay: function() {
 		$( ".overlay" ).addClass( "hidden" );
 	},
-	display_none: function( el ) {
+	display_none: function( el ) { // toggles .display-none class
 		if ( el.constructor === Array ) {
 			for ( var i=0; i<el.length; i++ ) {
 				$( el[i] ).toggleClass( "display-none" );
