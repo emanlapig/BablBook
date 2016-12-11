@@ -94,7 +94,6 @@ var View = {
 						V.display_none([ ".jp .btn.step1", ".jp .fg-inputs", ".jp .word-input" ]); // reveal step 1 btns, hide fg-inputs
 						$( ".jp .btn.step2, #jp-normal-rdg" ).addClass( "display-none" ); // hide step 2 btns (override)
 						$( ".jp .word-input" ).focus();
-						var val = $( ".jp .word-input" ).val().split( "" );
 						V.jp.vocab.edit.update_fgInputs(); // update fg-inputs behind the scenes
 					}, 500 );
 				},
