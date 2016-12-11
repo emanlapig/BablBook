@@ -37,7 +37,9 @@ var Controller = {
 					var parseLs = JSON.parse( ls );
 					M.jp.vocab.ls = parseLs;
 					for ( var i=0; i<parseLs.length; i++ ) {
-						M.jp.vocab.words.push( parseLs[i] );
+						if ( parseLs[i].f === "new" ) {
+							M.jp.vocab.words.push( parseLs[i] );
+						}
 					}
 				}
 				M.jp.vocab.index = M.jp.vocab.words[ M.jp.vocab.words.length - 1 ].i;
@@ -48,11 +50,12 @@ var Controller = {
 				init: function() {
 					V.goto_page( ".jp.word-edit" );
 					$( ".word-edit .word-input" ).on( "keyup", V.jp.vocab.edit.update_fgInputs );
-					$( "#jp-reading" ).on( "click", V.jp.vocab.edit.expand_fgInputs );
+					$( "#jp-reading" ).on( "click", V.jp.vocab.edit.reading );
 					$( "#jp-special-rdg" ).on( "click", V.jp.vocab.edit.special_reading );
 					$( "#jp-normal-rdg" ).on( "click", V.jp.vocab.edit.normal_reading );
 					$( "#jp-back-word" ).on( "click", V.jp.vocab.edit.back_to_word );
-					$( "#jp-submit" ).on( "click", C.jp.vocab.edit.validate );
+					$( "#jp-cancel-word" ).on( "click", C.jp.vocab.edit.cancel.confirm );
+					$( "#jp-save-word" ).on( "click", C.jp.vocab.edit.validate );
 				},
 				validate: function() {
 					var word = $( ".jp .word-input" ).val()
@@ -60,10 +63,10 @@ var Controller = {
 						, haveWord = ( word !== "" )
 						, haveDef = ( def !== "" );
 					if ( !haveWord ) {
-						alert("you have not entered a word");
+						alert( "you have not entered a word" );
 					}
 					if ( !haveDef ) {
-						alert("you have not entered a definition");
+						alert( "you have not entered a definition" );
 					}
 					if ( haveWord && haveDef ) {
 						C.jp.vocab.edit.save();
@@ -112,7 +115,26 @@ var Controller = {
 					$( "#jp-special-rdg" ).unbind();
 					$( "#jp-normal-rdg" ).unbind();
 					$( "#jp-back-word" ).unbind();
-					$( "#jp-submit" ).unbind();
+					$( "#jp-save-word" ).unbind();
+					V.jp.vocab.edit.reset_form();
+					V.goto_page( ".jp.vocab" );
+				},
+				cancel: {
+					confirm: function() {
+						var options = {
+							msgs: [ "Discard changes?" ],
+							btns: [ "yes", "no" ],
+							funcs: [ C.jp.vocab.edit.cancel.yes, C.jp.vocab.edit.cancel.no ] 
+						}
+						V.show_overlay( options );
+					},
+					yes: function() {
+						C.jp.vocab.edit.close();
+						V.hide_overlay();
+					},
+					no: function() {
+						V.hide_overlay();
+					}
 				}
 			}
 		}

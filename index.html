@@ -45,7 +45,6 @@
 		</span>
 		<span class="bottom">
 			<select class="word-type" name="type">
-				<!--<option value="" disabled selected>type</option>-->
 				<option value="n.">noun</option>
 				<option value="v.">verb</option>
 				<option value="adj.">adjective</option>
@@ -55,11 +54,16 @@
 				<option value="cntr.">counter</option>
 			</select><br>
 			<textarea rows="3" class="word-def" name="def" placeholder="Enter a definition"></textarea><br>
-			<a href="javascript:;" class="btn" id="jp-submit">Done</a>
+			<a href="javascript:;" class="btn" id="jp-cancel-word">Cancel</a>
+			<a href="javascript:;" class="btn" id="jp-save-word">Save</a>
 		</span>
 	</div>
 
-	<div class="overlay">
+	<div class="overlay hidden">
+		<div class="popup">
+			<span class="prompt"><!-- messages go here --></span>
+			<span class="btns"><!-- buttons go here --></span>
+		</div>
 	</div>
 
 	<script type="text/javascript">
