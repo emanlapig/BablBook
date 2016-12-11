@@ -33,15 +33,12 @@ var View = {
 					el.innerHTML = html;
 					el.setAttribute( "class", "word" );
 					el.setAttribute( "data-index", words[i].i );
-					// bind edit and delete btn events
-					var edit = "#jp-edit-" + words[i].i;
-					var del = "#jp-del-" + words[i].i;
-					$( ".jp.vocab .vocab-list" ).append( el ); // append word container
 					if ( words[i].f !== undefined ) {
 						el.setAttribute( "data-src", "local" ); // flag if change from localStorage
 					} else {
 						el.setAttribute( "data-src", "json" ); // flag if cached from JSON
 					}
+					$( ".jp.vocab .vocab-list" ).append( el ); // append word container
 					if ( i===words.length-1 ) {
 						$( ".jp.vocab .vocab-list" ).removeClass( "hidden" ); // reveal vocab list
 					}
