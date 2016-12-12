@@ -3,21 +3,19 @@
 var Controller = {
 	// ---------- MAIN ----------
 	init: function() {
-		$( "#jp-main" ).on( "click", C.jp.init );
+		$( "#jp-main" ).one( "click", C.jp.init );
 	},
 	// ---------- JAPANESE ----------
 	jp: {
 		// Main
 		init: function() { // initialize main view
-			$( "#jp-main" ).unbind();
-			$( "#jp-vocab" ).on( "click", C.jp.vocab.init );
+			$( "#jp-vocab" ).one( "click", C.jp.vocab.init );
 			V.goto_page( ".jp.main" );
 		},
 		// Vocab List
 		vocab: {
 			init: function() { // initialize vocab list view
-				$( "#jp-vocab" ).unbind();
-				$( "#jp-new-word" ).on( "click", C.jp.vocab.edit.new );
+				$( "#jp-new-word" ).one( "click", C.jp.vocab.edit.new );
 				V.goto_page( ".jp.vocab" );
 				C.jp.vocab.get_JSON();
 			},
@@ -31,7 +29,7 @@ var Controller = {
 						C.jp.vocab.get_localStorage();
 					},
 					error: function( jqXHR, textStatus, errorThrown ) {
-						console.log( errorThrown );
+						console.log( textStatus );
 						M.jp.vocab.words = []; // cache fetched words
 						M.jp.vocab.index = 0; // cache word index
 						C.jp.vocab.get_localStorage();
@@ -44,31 +42,38 @@ var Controller = {
 					var parseLs = JSON.parse( ls );
 					var words = M.jp.vocab.words;
 					M.jp.vocab.ls = parseLs; // cache localStorage
-					M.jp.vocab.index = words[ words.length - 1 ].i; // get word index
+					M.jp.vocab.index = ( words.length )? words[ words.length - 1 ].i : 0; // get word index
 					for ( var i=0; i<parseLs.length; i++ ) {
 						if ( parseLs[i].i > M.jp.vocab.index ) {
 							M.jp.vocab.index = parseLs[i].i; // user might have deleted the most recent word index
 						}
 						if ( parseLs[i].f === "new" ) { // new word
-							words.push( parseLs[i] ); // add to cached word list
+							words.push( parseLs[i] ); // add entry to cached word list
+						}
+						if ( parseLs[i].f === "edit" ) { // edit word
+							for ( var j=0; j<words.length; j++ ) {
+								if ( words[j].i == parseLs[i].i ) {
+									words[j] = parseLs[i]; // replace entry
+								}
+							}
 						}
 						if ( parseLs[i].f === "delete" ) { // delete word
 							for ( var j=0; j<words.length; j++ ) {
 								if ( words[j].i == parseLs[i].i ) {
-									words.splice( j, 1 );
+									words.splice( j, 1 ); // remove entry
 								}
 							}
 						}
 					}
 				}
 				V.jp.vocab.render_list();
-				setInterval( C.jp.vocab.bind_list_btns, 500 ); // let the list load before binding btn events
+				setTimeout( C.jp.vocab.bind_list_btns, 500 ); // let the list load before binding btn events
 			},
 			bind_list_btns: function() { // bind vocab list button events
 				var editBtns = $( ".edit-btn" );
 				var delBtns = $( ".del-btn" );
 				for ( var i=0; i<editBtns.length; i++ ) {
-					$( editBtns[i] ).on( "click", function() {
+					$( editBtns[i] ).one( "click", function() {
 						var index = $( this ).parent().attr( "data-index" );
 						var src = $( this ).parent().attr( "data-src" );
 						C.jp.vocab.edit.action = "edit";
@@ -78,7 +83,7 @@ var Controller = {
 					});
 				}
 				for ( var i=0; i<delBtns.length; i++ ) {
-					$( delBtns[i] ).on( "click", function() {
+					$( delBtns[i] ).one( "click", function() {
 						var index = $( this ).parent().attr( "data-index" );
 						var src = $( this ).parent().attr( "data-src" )
 						C.jp.vocab.edit.action = "delete";
@@ -105,6 +110,35 @@ var Controller = {
 					$( "#jp-back-word" ).on( "click", V.jp.vocab.edit.back_to_word );
 					$( "#jp-cancel-word" ).on( "click", C.jp.vocab.edit.cancel.confirm );
 					$( "#jp-save-word" ).on( "click", C.jp.vocab.edit.validate );
+					// edit existing word mode
+					if ( C.jp.vocab.edit.action === "edit" ) {
+						var index = C.jp.vocab.edit.index
+							, words = M.jp.vocab.words;
+						for ( var i=0; i<words.length; i++ ) {
+							if ( words[i].i == index ) {
+								var word = words[i];
+								$( ".jp .word-input" ).val( word.kj.split( "," ).join( "" ) ); // fill in word
+								$( ".jp .word-def" ).val( word.d ); // fill in definition
+								var type = $( ".jp .word-type option" );
+								for ( var j=0; j<type.length; j++ ) {
+									if ( $( type[j] ).val() === word.t ) {
+										$( type[j] ).attr( "selected", "selected" ); // fill in type
+									}
+								}
+								break;
+							}
+						}
+						setTimeout( function() { // wait for 1s after page transition
+							V.jp.vocab.edit.reading();
+							setTimeout( function() { // wait for fg-inputs to expand
+								var fgInputs = $( ".fg-input" )
+									, reading = word.fg.split( "," );
+								for ( var i=0; i<fgInputs.length; i++ ) {
+									$( fgInputs[i] ).val( reading[i] ); // fill in reading
+								}
+							}, 500 );
+						}, 1000 );
+					}
 				},
 				new: function() {
 					C.jp.vocab.edit.action = "new";
@@ -165,7 +199,7 @@ var Controller = {
 					} else if ( action === "edit" ) {
 						if ( src === "local" ) { // changes to a word in ls, ie a change to a change
 							for ( var j=0; j<ls.length; j++ ) {
-								if ( ls.i === i ) {
+								if ( ls[j].i == i ) {
 									word.f = ls[j].f; // retain existing flag
 									ls[j] = word; // save to cache
 									break;
